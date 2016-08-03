@@ -16,7 +16,7 @@ namespace Cactus.Owin
         private readonly ILogger log;
         private readonly bool isDetailsEnabled;
 
-        public JsonExceptionMiddleware(ExceptionMiddlewareConfig config, OwinMiddleware next)
+        public JsonExceptionMiddleware(OwinMiddleware next, ExceptionMiddlewareConfig config)
             : base(next)
         {
             log = config.Log;
@@ -70,7 +70,13 @@ namespace Cactus.Owin
                 context.Response.ContentType = "application/json";
                 using (var writter = new StreamWriter(context.Response.Body))
                 {
-                    await writter.WriteAsync(JsonConvert.SerializeObject(body));
+                    await writter.WriteAsync(JsonConvert.SerializeObject(body, Formatting.None, new JsonSerializerSettings
+                    {
+                        DefaultValueHandling = DefaultValueHandling.Ignore,
+                        MaxDepth = 3,
+                        NullValueHandling = NullValueHandling.Ignore,
+                        MissingMemberHandling = MissingMemberHandling.Ignore
+                    }));
                 }
             }
             else
@@ -84,7 +90,7 @@ namespace Cactus.Owin
             dynamic res = new ExpandoObject();
             if (ex is AggregateException)
             {
-                var aex = (AggregateException) ex;
+                var aex = (AggregateException)ex;
                 log.WriteVerbose("AggregateException detected, use InternalException to full up Message");
                 res.Message = aex.InnerExceptions.FirstOrDefault()?.Message;
             }
@@ -95,10 +101,10 @@ namespace Cactus.Owin
 
             if (isDetailsEnabled)
             {
-                res.Details = ex.ToString();
+                res.Details = ex;
             }
 
-            return ex;
+            return res;
         }
 
         protected virtual int BuildHttpStatus(Exception ex)
