@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>Yan O</authors>
+    <owners>CactusSoft LLC</owners>
+    <licenseUrl>https://github.com/CactusSoft/JsonException-Middleware/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/CactusSoft/JsonException-Middleware</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Simple middleware to cenvert unhandled exception to JSON response</description>
+    <releaseNotes></releaseNotes>
+    <copyright>Copyright 2016 CactusSoft LLC</copyright>
+    <tags></tags>
+  </metadata>
+</package>

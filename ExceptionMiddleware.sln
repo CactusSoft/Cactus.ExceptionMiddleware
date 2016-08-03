@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cactus.Owin.ExceptionMiddleware", "Cactus.Owin.ExceptionMiddleware.csproj", "{3579F067-C09F-4427-84F2-9D12A3132801}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cactus.Owin.ExceptionMiddleware", "ExceptionMiddleware/Cactus.Owin.ExceptionMiddleware.csproj", "{3579F067-C09F-4427-84F2-9D12A3132801}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
