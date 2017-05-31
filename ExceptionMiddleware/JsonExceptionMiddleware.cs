@@ -34,6 +34,9 @@ namespace Cactus.Owin
 
             catch (Exception ex)
             {
+                if (log.IsEnabled(TraceEventType.Warning))
+                    log.WriteWarning("Exception catched during process {0} {1} from IP {2}: {3}", context.Request.Method, context.Request.Uri.ToString(), context.Request.RemoteIpAddress, ex.ToString());
+
                 if (!isTooLate)
                 {
                     if (!IsExceptionHandable(context, ex))
