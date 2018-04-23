@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Company>CactusSoft LLC</Company>
+    <Authors>Yan O</Authors>
+    <Description>Middleware that converts unhandled exception into application/json http-response. Follows RESTful way to produce different HTTP status codes for different exception types.</Description>
+    <Copyright>CactusSoft LLC 2018</Copyright>
+    <PackageLicenseUrl>https://github.com/CactusSoft/Cactus.ExceptionMiddleware/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/CactusSoft/Cactus.ExceptionMiddleware</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/CactusSoft/Cactus.ExceptionMiddleware</RepositoryUrl>
+    <RepositoryType />
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="2.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.1" />
+  </ItemGroup>
+
+</Project>
