@@ -95,7 +95,7 @@ namespace Cactus.Aspnetcore.ExceptionMiddleware
 
             if (_isDetailsEnabled)
             {
-                res.Details = ex;
+                res.Details = ex.ToString();
             }
 
             return res;

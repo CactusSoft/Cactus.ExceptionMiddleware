@@ -11,6 +11,7 @@
     <PackageProjectUrl>https://github.com/CactusSoft/Cactus.ExceptionMiddleware</PackageProjectUrl>
     <RepositoryUrl>https://github.com/CactusSoft/Cactus.ExceptionMiddleware</RepositoryUrl>
     <RepositoryType />
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
