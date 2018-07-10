@@ -9,12 +9,12 @@ namespace Cactus.Owin
         {
             if (config == null)
             {
-                config=new ExceptionMiddlewareConfig();
+                config = new ExceptionMiddlewareConfig();
             }
 
             if (config.Log == null)
             {
-                config.Log = app.GetLoggerFactory().Create(typeof (JsonExceptionMiddleware).FullName);
+                config.Log = app.GetLoggerFactory().Create(typeof(JsonExceptionMiddleware).FullName);
             }
 
             app.Use<JsonExceptionMiddleware>(config);

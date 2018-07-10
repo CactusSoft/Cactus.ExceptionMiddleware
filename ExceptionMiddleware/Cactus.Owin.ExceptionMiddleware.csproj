@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\Cactus.Owin.ExceptionMiddleware.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -50,6 +51,7 @@
   <ItemGroup>
     <Compile Include="AppExtensions.cs" />
     <Compile Include="ExceptionMiddlewareConfig.cs" />
+    <Compile Include="ExceptionResponse.cs" />
     <Compile Include="JsonExceptionMiddleware.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

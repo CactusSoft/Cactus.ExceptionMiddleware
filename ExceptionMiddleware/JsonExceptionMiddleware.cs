@@ -8,19 +8,22 @@ using System.Threading.Tasks;
 using Microsoft.Owin;
 using Microsoft.Owin.Logging;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace Cactus.Owin
 {
     public class JsonExceptionMiddleware : OwinMiddleware
     {
-        private readonly ILogger log;
-        private readonly bool isDetailsEnabled;
+        private readonly ILogger _log;
+        private readonly bool _isDetailsEnabled;
+        private readonly IContractResolver _contractResolver;
 
         public JsonExceptionMiddleware(OwinMiddleware next, ExceptionMiddlewareConfig config)
             : base(next)
         {
-            log = config.Log;
-            isDetailsEnabled = config.EnableDetails;
+            _log = config.Log;
+            _isDetailsEnabled = config.EnableDetails;
+            _contractResolver = config.ContractResolver ?? new DefaultContractResolver();
         }
 
         public override async Task Invoke(IOwinContext context)
@@ -34,14 +37,14 @@ namespace Cactus.Owin
 
             catch (Exception ex)
             {
-                if (log.IsEnabled(TraceEventType.Warning))
-                    log.WriteWarning("Exception catched during process {0} {1} from IP {2}: {3}", context.Request.Method, context.Request.Uri.ToString(), context.Request.RemoteIpAddress, ex.ToString());
+                if (_log.IsEnabled(TraceEventType.Warning))
+                    _log.WriteWarning("Exception catched during process {0} {1} from IP {2}: {3}", context.Request.Method, context.Request.Uri.ToString(), context.Request.RemoteIpAddress, ex.ToString());
 
                 if (!isTooLate)
                 {
                     if (!IsExceptionHandable(context, ex))
                     {
-                        log.WriteVerbose("Exception throwed up by pipline, cause of IsExceptionHandable returned false");
+                        _log.WriteVerbose("Exception throwed up by pipline, cause of IsExceptionHandable returned false");
                         throw;
                     }
 
@@ -49,23 +52,23 @@ namespace Cactus.Owin
                     var body = BuildResponseBody(ex);
                     await HandleResponse(context, status, body);
 
-                    if (log.IsEnabled(TraceEventType.Verbose))
+                    if (_log.IsEnabled(TraceEventType.Verbose))
                     {
-                        log.WriteVerbose($"{ex.GetType().Name}: {ex.Message} converted to HTTP {status}");
+                        _log.WriteVerbose($"{ex.GetType().Name}: {ex.Message} converted to HTTP {status}");
                     }
                 }
                 else
                 {
-                    if (log.IsEnabled(TraceEventType.Warning))
+                    if (_log.IsEnabled(TraceEventType.Warning))
                     {
-                        log.WriteWarning($"Exception {ex.GetType().Name}: {ex.Message} doesn't proceed because HTTP headers are already sent");
+                        _log.WriteWarning($"Exception {ex.GetType().Name}: {ex.Message} doesn't proceed because HTTP headers are already sent");
                     }
                 }
             }
 
         }
 
-        protected virtual async Task HandleResponse(IOwinContext context, int status, dynamic body)
+        protected virtual async Task HandleResponse(IOwinContext context, int status, ExceptionResponse body)
         {
             context.Response.StatusCode = status;
             if (context.Response.Body.CanWrite)
@@ -78,33 +81,29 @@ namespace Cactus.Owin
                         DefaultValueHandling = DefaultValueHandling.Ignore,
                         MaxDepth = 3,
                         NullValueHandling = NullValueHandling.Ignore,
-                        MissingMemberHandling = MissingMemberHandling.Ignore
+                        MissingMemberHandling = MissingMemberHandling.Ignore,
+                        ContractResolver = _contractResolver
                     }));
                 }
             }
             else
             {
-                log.WriteWarning("Response body is not writtable stream, error message dropped.");
+                _log.WriteWarning("Response body is not writtable stream, error message dropped.");
             }
         }
 
-        protected virtual dynamic BuildResponseBody(Exception ex)
+        protected virtual ExceptionResponse BuildResponseBody(Exception ex)
         {
-            dynamic res = new ExpandoObject();
-            if (ex is AggregateException)
+            var res = new ExceptionResponse(ex.Message);
+            if (ex is AggregateException aex)
             {
-                var aex = (AggregateException)ex;
-                log.WriteVerbose("AggregateException detected, use InternalException to full up Message");
+                _log.WriteVerbose("AggregateException detected, use InternalException to full up Message");
                 res.Message = aex.InnerExceptions.FirstOrDefault()?.Message;
             }
-            else
-            {
-                res.Message = ex.Message;
-            }
 
-            if (isDetailsEnabled)
+            if (_isDetailsEnabled)
             {
-                res.Details = ex;
+                res.Details = ex.ToString();
             }
 
             return res;

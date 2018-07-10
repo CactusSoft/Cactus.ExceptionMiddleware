@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Security;
@@ -7,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace Cactus.Aspnetcore.ExceptionMiddleware
 {
@@ -15,12 +15,14 @@ namespace Cactus.Aspnetcore.ExceptionMiddleware
         private readonly RequestDelegate _next;
         private readonly ILogger _log;
         private readonly bool _isDetailsEnabled;
+        private readonly IContractResolver _contractResolver;
 
         public JsonExceptionMiddleware(RequestDelegate next, ILogger<JsonExceptionMiddleware> log, ExceptionMiddlewareConfig config)
         {
             _next = next;
             _log = log;
             _isDetailsEnabled = config.EnableDetails;
+            _contractResolver = config.ContractResolver ?? new DefaultContractResolver();
         }
 
         public async Task Invoke(HttpContext context)
@@ -56,7 +58,7 @@ namespace Cactus.Aspnetcore.ExceptionMiddleware
 
         }
 
-        protected virtual async Task HandleResponse(HttpContext context, int status, dynamic body)
+        protected virtual async Task HandleResponse(HttpContext context, int status, ExceptionResponse body)
         {
             context.Response.StatusCode = status;
             if (context.Response.Body.CanWrite)
@@ -69,7 +71,8 @@ namespace Cactus.Aspnetcore.ExceptionMiddleware
                         DefaultValueHandling = DefaultValueHandling.Ignore,
                         MaxDepth = 3,
                         NullValueHandling = NullValueHandling.Ignore,
-                        MissingMemberHandling = MissingMemberHandling.Ignore
+                        MissingMemberHandling = MissingMemberHandling.Ignore,
+                        ContractResolver = _contractResolver
                     }));
                 }
             }
@@ -79,18 +82,13 @@ namespace Cactus.Aspnetcore.ExceptionMiddleware
             }
         }
 
-        protected virtual dynamic BuildResponseBody(Exception ex)
+        protected virtual ExceptionResponse BuildResponseBody(Exception ex)
         {
-            dynamic res = new ExpandoObject();
-            if (ex is AggregateException)
+            var res = new ExceptionResponse(ex.Message);
+            if (ex is AggregateException aex)
             {
-                var aex = (AggregateException)ex;
                 _log?.LogDebug("AggregateException detected, use InternalException to full up Message");
                 res.Message = aex.InnerExceptions.FirstOrDefault()?.Message;
-            }
-            else
-            {
-                res.Message = ex.Message;
             }
 
             if (_isDetailsEnabled)
