@@ -4,14 +4,16 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Company>CactusSoft LLC</Company>
-    <Authors>Yan O</Authors>
+    <Authors>Yan O, Artem P</Authors>
     <Description>Middleware that converts unhandled exception into application/json http-response. Follows RESTful way to produce different HTTP status codes for different exception types.</Description>
     <Copyright>CactusSoft LLC 2018</Copyright>
     <PackageLicenseUrl>https://github.com/CactusSoft/Cactus.ExceptionMiddleware/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/CactusSoft/Cactus.ExceptionMiddleware</PackageProjectUrl>
     <RepositoryUrl>https://github.com/CactusSoft/Cactus.ExceptionMiddleware</RepositoryUrl>
-    <RepositoryType />
-    <Version>1.0.1</Version>
+    <RepositoryType>github</RepositoryType>
+    <Version>2.0.0</Version>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <FileVersion>2.0.0.0</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
